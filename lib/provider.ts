@@ -47,8 +47,8 @@ export async function askAI(maskedText: string, env: Record<string, string | und
   for (const { provider, key } of order) {
     try {
       if (provider === "gemini") {
-        // Google's models are sometimes overloaded (503), so a second model is tried before giving up.
-        const models = [env.GEMINI_MODEL || "gemini-3.1-flash-lite", "gemini-3.5-flash-lite"].filter((m, i, all) => all.indexOf(m) === i);
+        // Google's models are sometimes overloaded (503), so other models are tried one after another before giving up.
+        const models = [env.GEMINI_MODEL || "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash"].filter((m, i, all) => all.indexOf(m) === i);
         let geminiError: unknown;
         for (const model of models) {
           try {
