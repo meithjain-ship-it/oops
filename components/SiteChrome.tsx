@@ -1,4 +1,7 @@
-// Parts of the page that don't need any interaction: background, top bar, "how it works", promises, footer.
+import Link from "next/link";
+import AccountMenu from "./AccountMenu";
+
+// Parts of the page that don't need much interaction: background, top bar, "how it works", promises, footer.
 
 export function Liquid() {
   return (
@@ -14,15 +17,16 @@ export function SiteNav() {
   return (
     <header className="nav">
       <div className="wrap">
-        <a className="brand" href="#top" aria-label="OOPS, back to the top">
+        <Link className="brand" href="/" aria-label="OOPS, back to the home page">
           <span className="mark" />
           OOPS
-        </a>
+        </Link>
         <nav aria-label="Sections">
-          <a href="#check">Check my app</a>
-          <a href="#alert">Explain an alert</a>
-          <a className="hide-s" href="#how">How it works</a>
+          <Link href="/#check">Check my app</Link>
+          <Link href="/#alert">Explain an alert</Link>
+          <Link className="hide-s" href="/#how">How it works</Link>
         </nav>
+        <AccountMenu />
       </div>
     </header>
   );
@@ -87,8 +91,8 @@ export function Promises() {
           <p>A key like <code>sk-pro…[HIDDEN BY OOPS]</code> is all the AI ever sees. A full key is never sent to it.</p>
         </div>
         <div className="card">
-          <h4>Nothing is stored</h4>
-          <p>What you paste is used to answer you and then forgotten. OOPS keeps no copy.</p>
+          <h4>Nothing you paste is stored</h4>
+          <p>What you paste is used to answer you and then forgotten. Signing in is optional and never gives OOPS access to your code.</p>
         </div>
         <div className="card">
           <h4>AI can be wrong</h4>
@@ -105,7 +109,9 @@ export function SiteFooter() {
       <div className="wrap">
         <div className="cols">
           <p>OOPS is a hackathon prototype. It helps first-time builders catch exposed keys and understand security alerts. It does not replace a security review.</p>
-          <p>
+          <p className="links">
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
             <a href="https://github.com/meithjain-ship-it/oops">Source on GitHub</a>
           </p>
         </div>

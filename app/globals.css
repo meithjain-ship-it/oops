@@ -169,3 +169,25 @@ ol li::before { content: counter(s); flex: none; display: grid; place-items: cen
   .row button.tiny { width: auto; }
   .nav .btn { width: auto; }
 }
+
+/* ----- account menu, toast, legal pages ----- */
+.acct { position: relative; display: flex; align-items: center; }
+.nav .btn.tiny { min-height: 38px; padding: 0 16px; font-size: 14px; }
+.btn.soon { opacity: 0.6; cursor: not-allowed; background: transparent; }
+.btn.soon:hover { background: transparent; }
+details.menu { position: relative; }
+details.menu summary { list-style: none; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--glass); border-radius: 999px; padding: 4px 14px 4px 4px; min-height: 38px; font-size: 14px; }
+details.menu summary::before { content: none; }
+details.menu summary::-webkit-details-marker { display: none; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--grad); object-fit: cover; flex: none; display: inline-block; }
+.who { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drop { position: absolute; right: 0; top: calc(100% + 10px); min-width: 250px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(12, 15, 22, 0.96); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+.verified { display: inline-flex; align-items: center; gap: 8px; color: var(--mint); font-weight: 600; font-size: 14px; margin: 0 0 6px; }
+.verified::before { content: "✓"; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--mint); color: #04141a; font-size: 12px; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 50; max-width: calc(100vw - 32px); padding: 12px 20px; border: 1px solid var(--line); border-radius: 999px; background: rgba(12, 15, 22, 0.96); backdrop-filter: blur(14px); box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5); font-size: 15px; animation: rise 0.3s ease both; }
+.legal { padding-top: 72px; max-width: 760px; }
+.legal h2 { font-size: 26px; font-weight: 500; margin: 34px 0 8px; letter-spacing: -0.01em; }
+.legal p { color: var(--muted); max-width: 68ch; }
+.legal p strong, .legal p em { color: var(--text); }
+.footer .links { display: flex; gap: 8px 22px; flex-wrap: wrap; }
+@media (max-width: 640px) { .who { display: none; } details.menu summary { padding-right: 4px; } .drop { right: -8px; } }
