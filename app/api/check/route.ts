@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       method: "POST",
       headers: { "content-type": "application/json", "x-oops-secret": process.env.N8N_SHARED_SECRET ?? "" },
       body: JSON.stringify({ repo: input.repo, site: input.site }),
-      signal: AbortSignal.timeout(28000),
+      signal: AbortSignal.timeout(32000),
     });
     // Last safety net: hide any key-shaped text in the answer before it reaches the screen.
     const safeText = maskKeys(await res.text()).text;

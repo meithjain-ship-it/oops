@@ -18,13 +18,12 @@ export default function AlertPanel() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<AlertResult | null>(null);
   const [hiddenKeys, setHiddenKeys] = useState(0);
-  const [hiddenInBox, setHiddenInBox] = useState(0);
+  // Count what is really in the box, so the number always matches what the user sees.
+  const hiddenInBox = (text.match(/\[HIDDEN BY OOPS\]/g) ?? []).length;
 
   // Keys are hidden the moment they land in the box, so a full key never stays on screen or leaves the browser.
-  function setMasked(raw: string, reset = false) {
-    const m = maskKeys(raw);
-    setText(m.text);
-    setHiddenInBox((n) => (reset ? 0 : n) + m.count);
+  function setMasked(raw: string) {
+    setText(maskKeys(raw).text);
   }
 
   async function explain() {
@@ -62,8 +61,8 @@ export default function AlertPanel() {
         <button className="primary" onClick={explain} disabled={busy}>
           {busy ? "Reading…" : "Explain this alert"}
         </button>
-        <button onClick={() => setMasked(SAMPLES.github, true)}>Try fake GitHub alert</button>
-        <button onClick={() => setMasked(SAMPLES.vercel, true)}>Try fake Vercel alert</button>
+        <button onClick={() => setMasked(SAMPLES.github)}>Try fake GitHub alert</button>
+        <button onClick={() => setMasked(SAMPLES.vercel)}>Try fake Vercel alert</button>
       </div>
       {error && <p className="error">{error}</p>}
       {result && (

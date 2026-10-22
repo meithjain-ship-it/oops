@@ -31,7 +31,7 @@ export async function askGemini(maskedText: string, apiKey: string, model: strin
       contents: [{ role: "user", parts: [{ text: `<alert>\n${maskedText}\n</alert>` }] }],
       generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2048 },
     }),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(10000),
   });
   console.error(`gemini (${model}) answered in ${((Date.now() - startedAt) / 1000).toFixed(1)}s with status ${res.status}`);
   if (!res.ok) throw new Error(`Gemini said ${res.status}: ${maskKeys((await res.text()).slice(0, 300)).text}`);
@@ -46,7 +46,20 @@ export async function askAI(maskedText: string, env: Record<string, string | und
   let lastError: unknown;
   for (const { provider, key } of order) {
     try {
-      if (provider === "gemini") return await askGemini(maskedText, key, env.GEMINI_MODEL || "gemini-3.5-flash-lite");
+      if (provider === "gemini") {
+        // Google's models are sometimes overloaded (503), so a second model is tried before giving up.
+        const models = [env.GEMINI_MODEL || "gemini-3.1-flash-lite", "gemini-3.5-flash-lite"].filter((m, i, all) => all.indexOf(m) === i);
+        let geminiError: unknown;
+        for (const model of models) {
+          try {
+            return await askGemini(maskedText, key, model);
+          } catch (e) {
+            geminiError = e;
+            console.error(`gemini (${model}) failed, trying the next model if there is one`);
+          }
+        }
+        throw geminiError;
+      }
       return await askClaude(maskedText, key);
     } catch (e) {
       lastError = e;

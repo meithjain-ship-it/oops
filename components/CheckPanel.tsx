@@ -48,15 +48,19 @@ export default function CheckPanel({ repoHint, siteHint }: { repoHint: string; s
   }
 
   const findings = result?.findings ?? [];
+  // The allowed lists can hold several entries; show just the first one as the example.
+  const firstOf = (list: string) => list.split(",")[0].trim();
+  // n8n may already explain why no pull request opened; don't say it twice.
+  const prNoteGiven = (result?.notes ?? []).some((n) => /pull request/i.test(n));
 
   return (
     <section className="panel">
       <h2>Check my app</h2>
       <p className="note">Looks for secret keys in your GitHub code and your live site. For now it only works on our own test repo and test site.</p>
       <label htmlFor="repo">GitHub repo</label>
-      <input id="repo" value={repo} onChange={(e) => setRepo(e.target.value)} placeholder={repoHint || "owner/repo"} />
+      <input id="repo" value={repo} onChange={(e) => setRepo(e.target.value)} placeholder={firstOf(repoHint) || "owner/repo"} />
       <label htmlFor="site">Live site</label>
-      <input id="site" value={site} onChange={(e) => setSite(e.target.value)} placeholder={siteHint || "https://your-site.vercel.app"} />
+      <input id="site" value={site} onChange={(e) => setSite(e.target.value)} placeholder={firstOf(siteHint) || "https://your-site.vercel.app"} />
       <div className="row">
         <button className="primary" onClick={check} disabled={busy}>
           {busy ? "Checking…" : "Check"}
@@ -103,7 +107,7 @@ export default function CheckPanel({ repoHint, siteHint }: { repoHint: string; s
                   A fix is ready on GitHub: <a href={result.prUrl}>open the pull request</a>. Review it before you merge. OOPS never merges for you.
                 </p>
               ) : (
-                <p className="note">We couldn't open a fix pull request this time.</p>
+                !prNoteGiven && <p className="note">We couldn't open a fix pull request this time.</p>
               )}
             </>
           )}

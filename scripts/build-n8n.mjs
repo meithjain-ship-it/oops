@@ -77,18 +77,22 @@ const nodes = [
   {
     parameters: {
       method: "POST",
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
       authentication: "genericCredentialType",
       genericAuthType: "httpHeaderAuth", // pick your "Gemini key" credential here inside n8n (header name: x-goog-api-key)
       sendBody: true,
       specifyBody: "json",
       jsonBody: "={{ JSON.stringify($json.request) }}",
-      options: { timeout: 20000 },
+      options: { timeout: 13000 },
     },
     name: "Ask Gemini",
     type: "n8n-nodes-base.httpRequest",
     typeVersion: 4.2,
     position: [1320, -120],
+    // Google's answer is sometimes slow: give up after 13s and try once more, so the whole check stays under about 30s.
+    retryOnFail: true,
+    maxTries: 2,
+    waitBetweenTries: 300,
     onError: "continueRegularOutput",
   },
   code("Read answer and plan", withCore("4-read-answer-and-plan.js"), [1540, -120]),

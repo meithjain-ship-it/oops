@@ -74,6 +74,22 @@ describe("falling back", () => {
     expect(calls[1]).toContain("generativelanguage"); // then Gemini
   });
 
+  it("tries a second Gemini model when the first is overloaded (503)", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        calls.push(url);
+        if (calls.length === 1) return { ok: false, status: 503, text: async () => "high demand" };
+        return { ok: true, status: 200, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify(ANSWER) }] } }] }) };
+      }),
+    );
+    const raw = await askAI("hello", { GEMINI_API_KEY: FAKE_AI_KEY });
+    expect(cleanAlertResult(raw)?.headline).toBe("A key was exposed");
+    expect(calls).toHaveLength(2);
+    expect(calls[0]).not.toBe(calls[1]); // a different model the second time
+  });
+
   it("gives up with an error when the only AI fails", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 500, text: async () => "server error" })));
     await expect(askAI("hello", { GEMINI_API_KEY: FAKE_AI_KEY })).rejects.toThrow("Gemini said 500");
