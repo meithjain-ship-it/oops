@@ -298,7 +298,13 @@
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ message: $json.message, content: $json.contentB64, branch: $json.branch, sha: $json.sha || undefined }) }}",
         "options": {
-          "timeout": 15000
+          "timeout": 15000,
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1000
+            }
+          }
         }
       },
       "name": "Save file",

@@ -39,7 +39,7 @@ const ifNode = (name, left, position) => ({
   position,
 });
 
-const github = (name, method, url, body, position, extra = {}) => ({
+const github = (name, method, url, body, position, { batch, ...extra } = {}) => ({
   parameters: {
     method,
     url,
@@ -48,7 +48,7 @@ const github = (name, method, url, body, position, extra = {}) => ({
     sendHeaders: true,
     headerParameters: GITHUB_HEADERS,
     ...(body ? { sendBody: true, specifyBody: "json", jsonBody: body } : {}),
-    options: { timeout: 15000 },
+    options: { timeout: 15000, ...(batch ? { batching: { batch } } : {}) },
   },
   name,
   type: "n8n-nodes-base.httpRequest",
@@ -109,6 +109,8 @@ const nodes = [
     "=https://api.github.com/repos/{{ $json.repo }}/contents/{{ $json.path }}",
     "={{ JSON.stringify({ message: $json.message, content: $json.contentB64, branch: $json.branch, sha: $json.sha || undefined }) }}",
     [2640, -240],
+    // GitHub takes one commit per branch at a time, so save the files one by one (parallel saves failed with 409).
+    { batch: { batchSize: 1, batchInterval: 1000 } },
   ),
   github(
     "Open pull request",
