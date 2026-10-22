@@ -154,3 +154,45 @@ const connections = {
 const workflow = { name: "OOPS Key Check", nodes, connections, settings: {} };
 writeFileSync(new URL("../n8n/oops-check.workflow.json", import.meta.url), JSON.stringify(workflow, null, 2) + "\n");
 console.log(`Wrote n8n/oops-check.workflow.json with ${nodes.length} nodes`);
+
+// ---------------------------------------------------------------------------
+// The Alert Translator flow: n8n/oops-alert.workflow.json
+// ---------------------------------------------------------------------------
+const alertNodes = [
+  { parameters: { httpMethod: "POST", path: "oops-alert", responseMode: "responseNode", options: {} }, name: "Webhook", type: "n8n-nodes-base.webhook", typeVersion: 2, position: [0, 0] },
+  code("Check input", withCore("a1-check-input.js"), [220, 0]),
+  code("Build AI request", read("a2-build-ai-request.js"), [440, 0]),
+  {
+    parameters: {
+      method: "POST",
+      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+      authentication: "genericCredentialType",
+      genericAuthType: "httpHeaderAuth", // pick your "Gemini key" credential here inside n8n (header name: x-goog-api-key)
+      sendBody: true,
+      specifyBody: "json",
+      jsonBody: "={{ JSON.stringify($json.request) }}",
+      options: { timeout: 12000 },
+    },
+    name: "Ask Gemini",
+    type: "n8n-nodes-base.httpRequest",
+    typeVersion: 4.2,
+    position: [660, 0],
+    // If Google is busy, try once more. If it still fails, the website uses its own AI call as a backup.
+    retryOnFail: true,
+    maxTries: 2,
+    waitBetweenTries: 300,
+    onError: "continueRegularOutput",
+  },
+  code("Read answer", read("a3-read-answer.js"), [880, 0]),
+  respond("Reply", [1100, 0]),
+];
+const alertConnections = {
+  Webhook: { main: link("Check input") },
+  "Check input": { main: link("Build AI request") },
+  "Build AI request": { main: link("Ask Gemini") },
+  "Ask Gemini": { main: link("Read answer") },
+  "Read answer": { main: link("Reply") },
+};
+const alertWorkflow = { name: "OOPS Alert Translator", nodes: alertNodes, connections: alertConnections, settings: {} };
+writeFileSync(new URL("../n8n/oops-alert.workflow.json", import.meta.url), JSON.stringify(alertWorkflow, null, 2) + "\n");
+console.log(`Wrote n8n/oops-alert.workflow.json with ${alertNodes.length} nodes`);
