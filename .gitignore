@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# secrets: never commit these
+.env
+.env.local
+.env.*.local
+
+# logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# local Claude settings
+.claude/settings.local.json
