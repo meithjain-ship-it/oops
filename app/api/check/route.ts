@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { maskKeys } from "@/lib/mask";
 import { validateCheck } from "@/lib/validate";
 
+// The key check can take up to about 30 seconds, so allow more time than the platform default.
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const input = validateCheck(body?.repo, body?.site, process.env.ALLOWED_REPO ?? "", process.env.ALLOWED_SITE ?? "");

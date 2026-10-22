@@ -31,7 +31,7 @@ export async function askGemini(maskedText: string, apiKey: string, model: strin
       contents: [{ role: "user", parts: [{ text: `<alert>\n${maskedText}\n</alert>` }] }],
       generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2048 },
     }),
-    signal: AbortSignal.timeout(10000),
+    signal: AbortSignal.timeout(16000),
   });
   console.error(`gemini (${model}) answered in ${((Date.now() - startedAt) / 1000).toFixed(1)}s with status ${res.status}`);
   if (!res.ok) throw new Error(`Gemini said ${res.status}: ${maskKeys((await res.text()).slice(0, 300)).text}`);

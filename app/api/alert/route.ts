@@ -4,7 +4,10 @@ import { maskKeys } from "@/lib/mask";
 import { askAI, pickProvider } from "@/lib/provider";
 import { validateAlert } from "@/lib/validate";
 
-const safeMessage = (e: unknown) => maskKeys(e instanceof Error ? e.message : String(e)).text;
+// Google's AI can take a while when it is busy, so allow this route more time than the platform default.
+export const maxDuration = 60;
+
+const safeMessage =(e: unknown) => maskKeys(e instanceof Error ? e.message : String(e)).text;
 
 // The n8n flow does the work when it is connected. Returns null if it can't (so the backup below runs).
 async function askN8n(url: string, hiddenText: string): Promise<AlertResult | null> {
