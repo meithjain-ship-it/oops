@@ -57,6 +57,29 @@ describe("Claude path", () => {
   });
 });
 
+describe("falling back", () => {
+  it("tries Gemini when Claude fails, if both keys are set", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        calls.push(url);
+        if (url.includes("api.anthropic.com")) return { ok: false, status: 500, text: async () => "server error" };
+        return { ok: true, status: 200, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify(ANSWER) }] } }] }) };
+      }),
+    );
+    const raw = await askAI("hello", { GEMINI_API_KEY: FAKE_AI_KEY, ANTHROPIC_API_KEY: FAKE_AI_KEY });
+    expect(cleanAlertResult(raw)?.headline).toBe("A key was exposed");
+    expect(calls[0]).toContain("api.anthropic.com"); // Claude is tried first
+    expect(calls[1]).toContain("generativelanguage"); // then Gemini
+  });
+
+  it("gives up with an error when the only AI fails", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 500, text: async () => "server error" })));
+    await expect(askAI("hello", { GEMINI_API_KEY: FAKE_AI_KEY })).rejects.toThrow("Gemini said 500");
+  });
+});
+
 describe("no key set", () => {
   it("stops without calling any AI", async () => {
     const calls = pretendServer((text) => ({ content: [{ text }] }));

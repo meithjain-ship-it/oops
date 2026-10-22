@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cleanAlertResult, prepareAlert } from "@/lib/alert";
+import { maskKeys } from "@/lib/mask";
 import { askAI, pickProvider } from "@/lib/provider";
 import { validateAlert } from "@/lib/validate";
 
@@ -40,7 +41,9 @@ export async function POST(req: Request) {
     const result = cleanAlertResult(raw);
     if (!result) throw new Error("Answer had the wrong shape");
     return NextResponse.json({ result, hiddenKeys: hidden.count });
-  } catch {
+  } catch (e) {
+    // Log why it failed (with any key-shaped text hidden) so problems can be found. Never shown to the user.
+    console.error("alert failed:", maskKeys(e instanceof Error ? e.message : String(e)).text);
     return NextResponse.json({ error: "We couldn't get an explanation this time. Please try again." }, { status: 502 });
   }
 }

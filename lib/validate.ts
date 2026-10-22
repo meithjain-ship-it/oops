@@ -25,17 +25,20 @@ export type CheckInput = { ok: true; repo: string; site: string } | { ok: false;
 export function validateCheck(repoIn: unknown, siteIn: unknown, allowedRepo: string, allowedSite: string): CheckInput {
   if (typeof repoIn !== "string" || !repoIn.trim()) return { ok: false, message: "Please enter a GitHub repo link." };
   if (typeof siteIn !== "string" || !siteIn.trim()) return { ok: false, message: "Please enter your site's web address." };
-  const allowedR = normalizeRepo(allowedRepo);
-  const allowedS = normalizeSite(allowedSite);
-  if (!allowedR || !allowedS) {
+  // ALLOWED_REPO and ALLOWED_SITE can each list several values, separated by commas.
+  const allowedRepos = allowedRepo.split(",").map(normalizeRepo).filter((r): r is string => !!r);
+  const allowedSites = allowedSite.split(",").map(normalizeSite).filter((s): s is string => !!s);
+  if (allowedRepos.length === 0 || allowedSites.length === 0) {
     return { ok: false, message: "The key check isn't switched on yet. Please try again soon." };
   }
   const repo = normalizeRepo(repoIn);
   const site = normalizeSite(siteIn);
-  if (repo !== allowedR || site !== allowedS) {
-    return { ok: false, message: "For now OOPS can only check our own test repo and test site. Please use those links." };
+  if (!repo || !site || !allowedRepos.includes(repo) || !allowedSites.includes(site)) {
+    return { ok: false, message: "For now OOPS can only check our own test repos and test sites. Please use those links." };
   }
-  return { ok: true, repo, site };
+  // Keep the full web address (with its folder) for sites that live under a path, like GitHub Pages.
+  const fullSite = siteIn.trim().replace(/^(?!https?:\/\/)/i, "https://");
+  return { ok: true, repo, site: fullSite };
 }
 
 export const MAX_ALERT_LENGTH = 6000;

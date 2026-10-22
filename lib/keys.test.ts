@@ -61,6 +61,11 @@ describe("does not cry wolf on normal text", () => {
     expect(maskKeys(text)).toEqual({ text, count: 0 });
   });
 
+  it("leaves long plain words alone, since real keys contain digits", () => {
+    const text = `"authentication": "genericCredentialType", token = "somethingLongButJustWords"`;
+    expect(maskKeys(text).count).toBe(0);
+  });
+
   it("leaves short values alone", () => {
     const text = `const apiKey = "abc123";`;
     expect(maskKeys(text).count).toBe(0);

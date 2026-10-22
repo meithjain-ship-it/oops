@@ -22,6 +22,6 @@ export const KEY_PATTERNS: { name: string; pattern: RegExp }[] = [
   { name: "Database URL with password", pattern: /\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis):\/\/[^\s:@/]+:[^\s@/]+@\S+/ },
   {
     name: "General: api_key = \"long random text\"",
-    pattern: /(?<=(?:api[_-]?key|secret|token|passwd|password|auth)[\w-]*["']?\s*[:=]\s*["'])[A-Za-z0-9_\-+/=.]{16,}(?=["'])/i,
+    pattern: /(?<=(?:api[_-]?key|secret|token|passwd|password|auth)[\w-]*["']?\s*[:=]\s*["'])(?=[A-Za-z_\-+/=.]*\d)[A-Za-z0-9_\-+/=.]{16,}(?=["'])/i,
   },
 ];

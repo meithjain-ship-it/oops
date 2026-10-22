@@ -3,7 +3,7 @@ import { KEY_PATTERNS } from "./patterns";
 export const HIDDEN = "[HIDDEN BY OOPS]";
 
 // "sk-proj-FAKE123..." becomes "sk-pro…[HIDDEN BY OOPS]"
-function hideOne(key: string): string {
+export function hideOne(key: string): string {
   return key.slice(0, 6) + "…" + HIDDEN;
 }
 

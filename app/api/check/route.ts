@@ -19,11 +19,13 @@ export async function POST(req: Request) {
       body: JSON.stringify({ repo: input.repo, site: input.site }),
       signal: AbortSignal.timeout(28000),
     });
-    if (!res.ok) throw new Error(`n8n said ${res.status}`);
     // Last safety net: hide any key-shaped text in the answer before it reaches the screen.
     const safeText = maskKeys(await res.text()).text;
+    if (!res.ok) throw new Error(`n8n said ${res.status}: ${safeText.slice(0, 300)}`);
     return NextResponse.json(JSON.parse(safeText));
-  } catch {
+  } catch (e) {
+    // Log why it failed (never shown to the user, and key-shaped text is hidden).
+    console.error("check failed:", maskKeys(e instanceof Error ? e.message : String(e)).text);
     return NextResponse.json({ error: "OOPS is having trouble running the check. Please try again." }, { status: 502 });
   }
 }

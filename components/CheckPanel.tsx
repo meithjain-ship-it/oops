@@ -79,7 +79,7 @@ export default function CheckPanel({ repoHint, siteHint }: { repoHint: string; s
                     <p>
                       Found in <code>{f.file}</code>: <code>{f.hiddenKey}</code>
                     </p>
-                    {f.severity && <span className="badge medium">{f.severity}</span>}
+                    {f.severity && <span className={`badge ${["low", "medium", "high", "critical"].includes(f.severity) ? f.severity : "medium"}`}>{f.severity}</span>}
                     <div className="ai">Written by AI. Check it yourself.</div>
                     <p>{f.explanation}</p>
                     {f.reason && <p className="note">{f.reason}</p>}
