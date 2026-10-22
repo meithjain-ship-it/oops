@@ -48,7 +48,7 @@ export function cleanAlertResult(x: unknown): AlertResult | null {
   };
 }
 
-function parseJsonObject(text: string): unknown {
+export function parseJsonObject(text: string): unknown {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
   if (start === -1 || end === -1) return null;

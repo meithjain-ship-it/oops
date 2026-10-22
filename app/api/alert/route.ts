@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { askClaude, cleanAlertResult, prepareAlert } from "@/lib/alert";
+import { cleanAlertResult, prepareAlert } from "@/lib/alert";
+import { askAI, pickProvider } from "@/lib/provider";
 import { validateAlert } from "@/lib/validate";
-
-const PLACEHOLDER = "PASTE_YOUR_ANTHROPIC_KEY_HERE";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -30,11 +29,13 @@ export async function POST(req: Request) {
       if (!res.ok) throw new Error(`n8n said ${res.status}`);
       raw = await res.json();
     } else {
-      const key = process.env.ANTHROPIC_API_KEY;
-      if (!key || key === PLACEHOLDER) {
-        return NextResponse.json({ error: "No API key yet. Paste your Anthropic key into the .env.local file and restart the app." }, { status: 503 });
+      if (!pickProvider(process.env)) {
+        return NextResponse.json(
+          { error: "No AI key yet. Paste a Gemini or Anthropic key into the .env.local file and restart the app." },
+          { status: 503 },
+        );
       }
-      raw = await askClaude(hidden.text, key);
+      raw = await askAI(hidden.text, process.env);
     }
     const result = cleanAlertResult(raw);
     if (!result) throw new Error("Answer had the wrong shape");

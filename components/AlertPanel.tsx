@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { AlertResult } from "@/lib/alert";
+import { maskKeys } from "@/lib/mask";
 
 // Both samples are FAKE. The key below is made up.
 const SAMPLES = {
@@ -17,6 +18,14 @@ export default function AlertPanel() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<AlertResult | null>(null);
   const [hiddenKeys, setHiddenKeys] = useState(0);
+  const [hiddenInBox, setHiddenInBox] = useState(0);
+
+  // Keys are hidden the moment they land in the box, so a full key never stays on screen or leaves the browser.
+  function setMasked(raw: string, reset = false) {
+    const m = maskKeys(raw);
+    setText(m.text);
+    setHiddenInBox((n) => (reset ? 0 : n) + m.count);
+  }
 
   async function explain() {
     setBusy(true);
@@ -45,13 +54,16 @@ export default function AlertPanel() {
     <section className="panel">
       <h2>Alert Translator</h2>
       <p className="note">Paste a confusing security alert email. Any keys in it are hidden before it is analysed, and nothing you paste is stored.</p>
-      <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Paste the alert here…" />
+      <textarea value={text} onChange={(e) => setMasked(e.target.value)} placeholder="Paste the alert here…" />
+      {hiddenInBox > 0 && (
+        <p className="note">We hid {hiddenInBox} key{hiddenInBox > 1 ? "s" : ""} in the box. If it was a real key, replace it.</p>
+      )}
       <div className="row">
         <button className="primary" onClick={explain} disabled={busy}>
           {busy ? "Reading…" : "Explain this alert"}
         </button>
-        <button onClick={() => setText(SAMPLES.github)}>Try fake GitHub alert</button>
-        <button onClick={() => setText(SAMPLES.vercel)}>Try fake Vercel alert</button>
+        <button onClick={() => setMasked(SAMPLES.github, true)}>Try fake GitHub alert</button>
+        <button onClick={() => setMasked(SAMPLES.vercel, true)}>Try fake Vercel alert</button>
       </div>
       {error && <p className="error">{error}</p>}
       {result && (

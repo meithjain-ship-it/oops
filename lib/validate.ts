@@ -28,7 +28,7 @@ export function validateCheck(repoIn: unknown, siteIn: unknown, allowedRepo: str
   const allowedR = normalizeRepo(allowedRepo);
   const allowedS = normalizeSite(allowedSite);
   if (!allowedR || !allowedS) {
-    return { ok: false, message: "OOPS isn't set up with a test repo and test site yet. Ask the app owner to finish setup." };
+    return { ok: false, message: "The key check isn't switched on yet. Please try again soon." };
   }
   const repo = normalizeRepo(repoIn);
   const site = normalizeSite(siteIn);
