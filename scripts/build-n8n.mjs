@@ -14,6 +14,9 @@ const GITHUB_HEADERS = {
     { name: "X-GitHub-Api-Version", value: "2022-11-28" },
   ],
 };
+// Google's models are sometimes overloaded (503). The model is picked at random on every try, so a retry
+// usually lands on a free one. (An "=" at the start tells n8n this is an expression.)
+const GEMINI_URL = "=https://generativelanguage.googleapis.com/v1beta/models/{{ ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.5-flash'][Math.floor(Math.random() * 3)] }}:generateContent";
 const PLAN = "$('Read answer and plan').first().json";
 
 const code = (name, jsCode, position) => ({
@@ -77,7 +80,7 @@ const nodes = [
   {
     parameters: {
       method: "POST",
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+      url: GEMINI_URL,
       authentication: "genericCredentialType",
       genericAuthType: "httpHeaderAuth", // pick your "Gemini key" credential here inside n8n (header name: x-goog-api-key)
       sendBody: true,
@@ -91,8 +94,8 @@ const nodes = [
     position: [1320, -120],
     // Google's answer is sometimes slow: give up after 13s and try once more, so the whole check stays under about 30s.
     retryOnFail: true,
-    maxTries: 2,
-    waitBetweenTries: 300,
+    maxTries: 3,
+    waitBetweenTries: 500,
     onError: "continueRegularOutput",
   },
   code("Read answer and plan", withCore("4-read-answer-and-plan.js"), [1540, -120]),
@@ -165,7 +168,7 @@ const alertNodes = [
   {
     parameters: {
       method: "POST",
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+      url: GEMINI_URL,
       authentication: "genericCredentialType",
       genericAuthType: "httpHeaderAuth", // pick your "Gemini key" credential here inside n8n (header name: x-goog-api-key)
       sendBody: true,
@@ -179,8 +182,8 @@ const alertNodes = [
     position: [660, 0],
     // If Google is busy, try once more. If it still fails, the website uses its own AI call as a backup.
     retryOnFail: true,
-    maxTries: 2,
-    waitBetweenTries: 300,
+    maxTries: 3,
+    waitBetweenTries: 500,
     onError: "continueRegularOutput",
   },
   code("Read answer", read("a3-read-answer.js"), [880, 0]),

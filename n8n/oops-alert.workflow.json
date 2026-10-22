@@ -43,7 +43,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/{{ ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.5-flash'][Math.floor(Math.random() * 3)] }}:generateContent",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -61,8 +61,8 @@
         0
       ],
       "retryOnFail": true,
-      "maxTries": 2,
-      "waitBetweenTries": 300,
+      "maxTries": 3,
+      "waitBetweenTries": 500,
       "onError": "continueRegularOutput"
     },
     {
