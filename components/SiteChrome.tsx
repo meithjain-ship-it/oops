@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AccountMenu from "./AccountMenu";
+import IntroScene from "./IntroScene";
 
 // Parts of the page that don't need much interaction: background, top bar, "how it works", promises, footer.
 
@@ -51,6 +52,7 @@ export function Hero() {
         <span className="chip">Nothing you paste is stored</span>
         <span className="chip">OOPS never merges a change for you</span>
       </div>
+      <IntroScene />
     </section>
   );
 }

@@ -191,3 +191,67 @@ details.menu summary::-webkit-details-marker { display: none; }
 .legal p strong, .legal p em { color: var(--text); }
 .footer .links { display: flex; gap: 8px 22px; flex-wrap: wrap; }
 @media (max-width: 640px) { .who { display: none; } details.menu summary { padding-right: 4px; } .drop { right: -8px; } }
+
+/* ----- intro scene: a 15-second story at the top of the page (play once, skippable, off for reduced motion) ----- */
+.scene { position: relative; margin-top: 40px; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; background: #05070d; aspect-ratio: 1200 / 520; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45); }
+.scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sc-keytext { font: 500 17px ui-monospace, "JetBrains Mono", Consolas, monospace; fill: #4ff2b3; }
+.sc-noise { font: 10.5px ui-monospace, "JetBrains Mono", Consolas, monospace; fill: #5ee7ff; }
+.sc-label { position: absolute; left: 20px; top: 16px; margin: 0; font: 500 13px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); }
+.sc-controls { position: absolute; right: 14px; bottom: 12px; }
+.sc-notif-slide { position: absolute; top: 6%; right: 3%; width: clamp(250px, 34%, 390px); }
+.sc-notif { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 18px; background: rgba(14, 18, 30, 0.94); border: 1px solid rgba(255, 90, 110, 0.5); box-shadow: 0 18px 50px rgba(255, 70, 100, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.sc-notif b { display: block; font-size: 15px; color: var(--text); }
+.sc-notif span:not(.sc-dot) { font-size: 15px; color: #ffc2cb; }
+.sc-notif small { margin-left: auto; font: 12px var(--mono); color: var(--muted); }
+.sc-dot { flex: none; width: 12px; height: 12px; border-radius: 50%; background: #ff5470; box-shadow: 0 0 14px #ff5470; animation: sc-pulse 1.2s ease-in-out infinite; }
+.sc-caption { position: absolute; left: 0; right: 0; bottom: 5%; margin: 0; padding: 0 24px; text-align: center; font-size: clamp(17px, 2.6vw, 32px); font-weight: 300; letter-spacing: -0.01em; }
+.sc-caption b { font-weight: 600; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* the 15-second timeline (all times are shares of 15s) */
+.sc-label { opacity: 0; animation: sc-label 15s both; }
+.sc-codeline { opacity: 0; animation: sc-code 15s both; }
+.sc-cursor { animation: sc-blink 0.9s steps(1) infinite; }
+.sc-strike { opacity: 0; animation: sc-strike 15s both; }
+.sc-flood { opacity: 0; animation: sc-flood 15s both; }
+.sc-col { animation: sc-scroll linear infinite; }
+.sc-red { opacity: 0; animation: sc-red 15s both; }
+.sc-glow-cyan { animation: sc-gcyan 15s both; }
+.sc-glow-red { opacity: 0; animation: sc-gred 15s both; }
+.sc-glow-mint { opacity: 0; animation: sc-gmint 15s both; }
+.sc-person { transform-origin: 290px 444px; animation: sc-lean 15s both; }
+.sc-breathe { animation: sc-breathe 4s ease-in-out infinite; }
+.sc-shield { transform-origin: 800px 252px; opacity: 0; animation: sc-shield 15s both; }
+.sc-notif-slide { opacity: 0; animation: sc-slide 15s both; }
+.sc-notif-buzz { animation: sc-buzz 15s both; }
+.sc-caption { opacity: 0; animation: sc-cap 15s both; }
+
+@keyframes sc-label { 0%, 2% { opacity: 0; } 6%, 100% { opacity: 1; } }
+@keyframes sc-code { 0%, 5% { opacity: 0; } 9%, 100% { opacity: 1; } }
+@keyframes sc-blink { 50% { opacity: 0; } }
+@keyframes sc-strike { 0%, 70% { opacity: 0; } 72%, 100% { opacity: 1; } }
+@keyframes sc-flood { 0%, 20% { opacity: 0; } 24%, 49% { opacity: 1; } 54%, 100% { opacity: 0; } }
+@keyframes sc-scroll { to { transform: translateY(-288px); } }
+@keyframes sc-red { 0%, 52% { opacity: 0; } 55% { opacity: 0.24; } 58% { opacity: 0; } 60% { opacity: 0.18; } 64%, 100% { opacity: 0; } }
+@keyframes sc-gcyan { 0%, 50% { opacity: 0.9; } 56%, 100% { opacity: 0.18; } }
+@keyframes sc-gred { 0%, 52% { opacity: 0; } 55% { opacity: 1; } 70% { opacity: 0.35; } 82%, 100% { opacity: 0; } }
+@keyframes sc-gmint { 0%, 68% { opacity: 0; } 82%, 100% { opacity: 0.8; } }
+@keyframes sc-lean { 0%, 55% { transform: rotate(0) translateX(0); } 59%, 100% { transform: rotate(-5deg) translateX(-8px); } }
+@keyframes sc-breathe { 50% { transform: translateY(-3px); } }
+@keyframes sc-shield { 0%, 65% { opacity: 0; transform: scale(0.6); } 70%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes sc-slide { 0%, 52.6% { opacity: 0; transform: translateX(130%) rotate(3deg); } 55.4% { opacity: 1; transform: translateX(-10px) rotate(-1deg); } 57%, 100% { opacity: 1; transform: translateX(0) rotate(0); } }
+@keyframes sc-buzz { 0%, 57.3% { transform: none; } 58.3% { transform: translateX(-5px) rotate(-1.2deg); } 59.3% { transform: translateX(5px) rotate(1.2deg); } 60.3% { transform: translateX(-4px) rotate(-1deg); } 61.3% { transform: translateX(4px) rotate(1deg); } 62.3%, 100% { transform: none; } }
+@keyframes sc-cap { 0%, 76% { opacity: 0; transform: translateY(12px); } 82%, 100% { opacity: 1; transform: none; } }
+@keyframes sc-pulse { 50% { opacity: 0.45; } }
+
+/* skipped, replayed-after, or reduced motion: jump straight to the calm final picture */
+.scene[data-mode="skip"] * { animation: none !important; }
+.scene[data-mode="skip"] .sc-label, .scene[data-mode="skip"] .sc-codeline, .scene[data-mode="skip"] .sc-strike { opacity: 1; }
+.scene[data-mode="skip"] .sc-flood, .scene[data-mode="skip"] .sc-red, .scene[data-mode="skip"] .sc-glow-red, .scene[data-mode="skip"] .sc-cursor { opacity: 0; }
+.scene[data-mode="skip"] .sc-glow-cyan { opacity: 0.18; }
+.scene[data-mode="skip"] .sc-glow-mint { opacity: 0.8; }
+.scene[data-mode="skip"] .sc-notif-slide, .scene[data-mode="skip"] .sc-caption, .scene[data-mode="skip"] .sc-shield { opacity: 1; transform: none; }
+.scene[data-mode="skip"] .sc-person { transform: rotate(-5deg) translateX(-8px); }
+@media (prefers-reduced-motion: reduce) { .scene * { animation: none !important; } }
+@media (max-width: 640px) { .scene { aspect-ratio: 1 / 1.15; } .sc-label { font-size: 11px; } }
+@media (max-width: 640px) { .scene svg { inset: auto; left: -4%; top: 16%; width: 125%; height: auto; } }
